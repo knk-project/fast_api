@@ -11,8 +11,10 @@
 10. Crete a docker-compose file to deploy the app: `2 hours`
 
 # Finished Tasks
-1. global estimation: `30 minutes`
-2. research of FAST API documentation: `[40m, 50m]`
-3. research of MongoDB documentation: `[25m, 20m]`
-4. research of Pydantic documentation: `[30m, 30m]`
+1. ** global estimation: `30 minutes`
+2. research of FAST API documentation: `[40m, 50m, 45m,]`
+3. ** research of MongoDB documentation: `[25m, 20m, 15m]`
+4. ** research of Pydantic documentation: `[30m, 30m, 60m]`
 5. configuring project: `[60m]`
+6. defining User model: `[60m]`
+7. create CRUD system for users resource: `[60m]`

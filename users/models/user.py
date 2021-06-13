@@ -1,7 +1,9 @@
 from datetime import datetime
 
 from bson import ObjectId
+from fastapi import HTTPException
 from pydantic import (Field, EmailStr, SecretStr)
+from starlette import status
 
 from commons.models import CommonModel
 from roles.helpers.enum import RoleEnum
@@ -34,3 +36,14 @@ class User(CommonModel):
                 'updated_at': '2008-09-15T15:53:00+05:00',
             }
         }
+
+    @staticmethod
+    async def check_email(model, value):
+        if await model.find_one({'email': value}):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=[{"loc": ["email"],
+                         "msg": "Email already in use.",
+                         "type": "value_error"}]
+            )
+        return value
