@@ -1,27 +1,26 @@
-from typing import Optional
+import uvicorn
+import os
+from motor.motor_asyncio import AsyncIOMotorClient
 
 from fastapi import FastAPI
-from pydantic import BaseModel
+
+from config import config
+from users.router import router as user_router
 
 app = FastAPI()
 
+client = AsyncIOMotorClient(config.MONGODB_URL)
+db = client.fast_api_db
 
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Optional[bool] = None
+# Set application routes
+app.include_router(user_router)
 
 
 @app.get("/")
-def read_root():
+async def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 
-
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item_id}

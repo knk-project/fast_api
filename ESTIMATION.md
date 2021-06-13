@@ -12,4 +12,7 @@
 
 # Finished Tasks
 1. global estimation: `30 minutes`
-2. research of FAST API documentation: `[40m, ]`
+2. research of FAST API documentation: `[40m, 50m]`
+3. research of MongoDB documentation: `[25m, 20m]`
+4. research of Pydantic documentation: `[30m, 30m]`
+5. configuring project: `[60m]`
