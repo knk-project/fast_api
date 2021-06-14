@@ -3,27 +3,22 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import FastAPI
 
 from config import config
-from users.router import router as user_router
+from users import UserApplication
 
 # App initialization
 app = FastAPI()
 app.mongodb_client = None
 
 
-# Configuring db client
-@app.on_event('startup')
-async def startup_db_client():
-    app.mongodb_client = AsyncIOMotorClient(config.DB_URL)
-    app.mongodb = app.mongodb_client[config.DB_NAME]
+# Initialize database client
+client = AsyncIOMotorClient(config.DB_URL)
+database = client[config.DB_NAME]
 
-
-@app.on_event('shutdown')
-async def shutdown_db_client():
-    app.mongodb_client.close()
-
-
-# Attaching application routers
-app.include_router(user_router)
+# Register applications.
+user_service = UserApplication(database=database)
+app.include_router(
+    user_service.get_application_router(), prefix="/api/users", tags=["users"]
+)
 
 
 # Configuring uvicorn for easier management

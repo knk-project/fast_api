@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import TypeVar
 
 from bson import ObjectId
 from pydantic import BaseModel, Field
@@ -24,3 +25,6 @@ class CommonModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     created_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
+
+
+MODEL = TypeVar('MODEL', bound=CommonModel)

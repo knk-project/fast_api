@@ -13,7 +13,7 @@ class DatabaseConfig(BaseSettings):
 
 class ServerConfig(BaseSettings):
     HOST: str = "0.0.0.0"
-    PORT: str = "8000"
+    PORT: str = "8003"
 
 
 class Config(CommonConfig, DatabaseConfig, ServerConfig):

@@ -20,7 +20,7 @@ docs.zip
 archive.zip
 
 # Database
-data/db
+data/db/
 
 # vim temporary files
 *~

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from bson import ObjectId
 from fastapi import HTTPException
-from pydantic import (Field, EmailStr, SecretStr)
+from pydantic import (Field, EmailStr)
 from starlette import status
 
 from commons.models import CommonModel
@@ -16,7 +16,7 @@ class User(CommonModel):
     role: RoleEnum = RoleEnum.USER
     is_active: bool = True
     last_logic: datetime = None
-    hashed_password: SecretStr
+    hashed_password: str = Field(...)
 
     class Config:
         allow_population_by_field_name = True
