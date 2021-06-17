@@ -11,59 +11,33 @@ from commons.exceptions.instance import InstanceNotFound
 class MongoDBRepository(AbstractRepository):
     collection: AsyncIOMotorCollection
 
-    def __init__(
-        self,
-        db_model: Type[MODEL],
-        collection: AsyncIOMotorCollection
-    ):
-        super().__init__(db_model)
+    def __init__(self, model: Type[MODEL], collection: AsyncIOMotorCollection):
+        super().__init__(model)
         self.collection = collection
 
-    async def create(self, data: dict):
-        instance = await self.collection.insert_one(data)
-        data.update({'_id': instance.inserted_id})
-        return self.model(**data)
+    async def create(self, model: MODEL):
+        return await self.collection.insert_one(model.dict(exclude={'id'}))
 
-    async def get(
-        self,
-        value: Optional[Union[int, str]],
-        key='_id',
-        **kwargs
-    ):
-        instance = await self.collection.find_one({key: value})
-        return self.model(**instance) if instance else None
+    async def get(self, value: Optional[Union[int, str]], key='_id') -> MODEL:
+        if instance := await self.collection.find_one({key: value}):
+            return self.model(**instance)
 
-    async def update(
-            self,
-            instance_id: Optional[Union[int, str]],
-            model: MODEL
-    ) -> MODEL:
-        data = self.model(**model.dict(exclude={'id', '_id'})).dict()
-
-        await self.collection.replace_one({"_id": instance_id}, data)
-        data.update({'_id': instance_id})
-        return self.model(**data)
+    async def update(self, instance_id: str, data: dict) -> MODEL:
+        return await self.collection.update_one({"_id": instance_id},
+                                                {"$set": data})
 
     async def list(self, **kwargs) -> List[MODEL]:
-        instances = await self.collection.find().to_list(1000)
-        return instances
+        return await self.collection.find().to_list(1000)
 
-    async def filter(self, **kwargs):
+    async def filter(self, **kwargs) -> List[MODEL]:
+        # TODO
         instances = await self.collection.find(**kwargs).to_list(1000)
         return instances
 
-    async def delete(
-            self,
-            instance_id: Optional[Union[int, str]],
-            key: str = '_id'
-    ) -> None:
+    async def delete(self, instance_id: str, key: str = '_id') -> None:
         await self.collection.delete_one({key: instance_id})
 
-    async def get_or_404(
-            self,
-            value: Optional[Union[int, str]],
-            key: str = '_id'
-    ):
+    async def get_or_404(self, value: Optional[Union[int, str]], key: str = '_id'):
         if instance := await self.get(value, key):
             return instance
 

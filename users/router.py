@@ -5,7 +5,7 @@ from starlette import status
 from starlette.responses import JSONResponse
 
 from commons.repositories import AbstractRepository
-from .models.user import User
+from users.model import User
 
 
 def get_user_router(repository: AbstractRepository) -> APIRouter:
@@ -13,10 +13,12 @@ def get_user_router(repository: AbstractRepository) -> APIRouter:
 
     @router.post('/', response_description='Register', response_model=User)
     async def create_user(user: User = Body(...)):
-        data = jsonable_encoder(User(**user.dict(exclude={'id', '_id'})))
-        user = await repository.create(data)
+        new_instance = await repository.create(user)
+        instance = await repository.get(new_instance.inserted_id)
+        processed_data = jsonable_encoder(instance)
+        processed_data.update({'id': str(processed_data.get('_id', None))})
         return JSONResponse(status_code=status.HTTP_201_CREATED,
-                            content=jsonable_encoder(user))
+                            content=processed_data)
 
     @router.get(
         '/list/', response_description='List all users', response_model=List[User]

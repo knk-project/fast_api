@@ -11,11 +11,11 @@ class UserRepository(MongoDBRepository):
 
     def __init__(
         self,
-        db_model: Type[MODEL],
+        model: Type[MODEL],
         collection: AsyncIOMotorCollection,
         email_collation: Optional[Collation] = None,
     ):
-        super().__init__(db_model, collection)
+        super().__init__(model, collection)
 
         if email_collation:
             self.email_collation = email_collation  # pragma: no cover
@@ -28,10 +28,10 @@ class UserRepository(MongoDBRepository):
             collation=self.email_collation,
         )
 
-    async def create(self, data: dict):
-        if await self.get(value=data.get('email'), key='email'):
-            raise UniqueException(value=data.get('email'), key='email')
-        return await super().create(data)
+    async def create(self, model: MODEL):
+        if await self.get(value=model.email, key='email'):
+            raise UniqueException(value=model.email, key='email')
+        return await super().create(model)
 
     async def update(self, instance_id: str, model: MODEL) -> MODEL:
         instance = await self.get(value=model.email, key='email')

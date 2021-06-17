@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from commons import CommonApplication
-from users.models.user import User
+from users.model import User
 from users.repository import UserRepository
 from users.router import get_user_router
 

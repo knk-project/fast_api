@@ -7,11 +7,11 @@ from commons.models import MODEL
 class AbstractRepository(ABC):
     model: Type[MODEL]
 
-    def __init__(self, db_model: Type[MODEL]):
-        self.model = db_model
+    def __init__(self, model: Type[MODEL]):
+        self.model = model
 
     @abstractmethod
-    async def create(self, data: dict):
+    async def create(self, model: MODEL):
         raise NotImplementedError
 
     @abstractmethod
