@@ -1,16 +1,13 @@
 from fastapi import APIRouter
 
-from commons import CommonApplication
-from users.model import User
-from users.repository import UserRepository
-from users.router import get_user_router
+from core import CommonApp
+from users.routers.auth import get_auth_router
+from users.routers.crud import get_crud_router
 
 
-class UserApplication(CommonApplication):
-    def __init__(self, database):
-        self.collection = database["users"]
-        self.repository = UserRepository(User, self.collection)
-        self.model = User
-
+class UsersApp(CommonApp):
     def get_application_router(self) -> APIRouter:
-        return get_user_router(self.repository)
+        return get_crud_router()
+
+    def get_auth_router(self) -> APIRouter:
+        return get_auth_router()

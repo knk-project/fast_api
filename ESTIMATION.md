@@ -16,7 +16,13 @@
 3. ** research of MongoDB documentation: `[25m, 20m, 15m]`
 4. ** research of Pydantic documentation: `[30m, 30m, 60m]`
 5. ** configuring project: `[60m]`
-   5.1. --writing repository system based on provided database: `[120m, 30m]`
 6. ** defining User model: `[60m]`
 7. **create CRUD system for users resource: `[60m, 120m]`
+8. **create permission system based on role: `2 hours`
+9. **Implement a simple authentication middleware: `2 hours`
+10. **Crete a docker-compose file to deploy the app: `2 hours`
+11. Making more abstract database manager: `5 hours`
+12. Writing core functionality (basic functionality for CRUD system, that will be handy to work with in the future): `5 hours`
 
+# TOTAL
+26 hours

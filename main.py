@@ -1,23 +1,40 @@
 import uvicorn
-from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import FastAPI
+from starlette.middleware import Middleware
+from starlette.middleware.authentication import AuthenticationMiddleware
 
 from config import config
-from users import UserApplication
+from core.database import get_database
+from core.middleware.auth import AuthMiddleware
+from users import UsersApp
 
 # App initialization
 app = FastAPI()
-app.mongodb_client = None
+app.add_middleware(AuthenticationMiddleware, backend=AuthMiddleware())
 
 
-# Initialize database client
-client = AsyncIOMotorClient(config.DB_URL)
-database = client[config.DB_NAME]
+@app.on_event("startup")
+async def startup():
+    await get_database().connect()
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    await get_database().disconnect()
+
+
+middleware = [
+    Middleware(AuthenticationMiddleware, backend=AuthMiddleware())
+]
 
 # Register applications.
-user_service = UserApplication(database=database)
+user_service = UsersApp(get_database())
 app.include_router(
     user_service.get_application_router(), prefix="/api/users", tags=["users"]
+)
+
+app.include_router(
+    user_service.get_auth_router(), prefix="/api/auth", tags=["auth"]
 )
 
 

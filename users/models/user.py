@@ -1,21 +1,20 @@
 from datetime import datetime
 
 from bson import ObjectId
-from fastapi import HTTPException
-from pydantic import (Field, EmailStr)
-from starlette import status
 
-from commons.models import CommonModel
+from pydantic import (Field, EmailStr)
+
+from core.models import CommonModel
 from roles.helpers.enum import RoleEnum
 
 
-class User(CommonModel):
+class UserModel(CommonModel):
     email: EmailStr = Field(...)
     first_name: str = Field(...)
     last_name: str = Field(...)
     role: RoleEnum = RoleEnum.USER
     is_active: bool = True
-    last_logic: datetime = None
+    last_login: datetime = None
     hashed_password: str = Field(...)
 
     class Config:

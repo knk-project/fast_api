@@ -16,7 +16,13 @@ class ServerConfig(BaseSettings):
     PORT: str = "8003"
 
 
-class Config(CommonConfig, DatabaseConfig, ServerConfig):
+class AuthConfig(BaseSettings):
+    AUTH_EXPIRE_MINUTES: int
+    AUTH_SECRET_KEY: str
+    AUTH_ALGORITHM: str
+
+
+class Config(CommonConfig, DatabaseConfig, ServerConfig, AuthConfig):
     class Config:
         env_file = '.env'
         env_file_encoding = 'utf-8'

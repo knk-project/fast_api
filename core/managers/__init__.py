@@ -1,14 +1,23 @@
+import inspect
 from abc import ABC, abstractmethod
 from typing import Type, Optional, List, Union
+
+from bson import ObjectId
 
 from core.models import MODEL
 
 
-class AbstractManager(ABC):
+class DatabaseManager(ABC):
     model: Type[MODEL]
+    client = None
+    database = None
+    _collection = None
 
-    def __init__(self, model: Type[MODEL]):
-        self.model = model
+    def connect(self, **kwargs):
+        raise NotImplementedError
+
+    def disconnect(self, **kwargs):
+        raise NotImplementedError
 
     @abstractmethod
     async def create(self, model: MODEL):
@@ -19,17 +28,18 @@ class AbstractManager(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def update(self, instance_id: Optional[Union[int, str]], model: MODEL):
+    async def update(self, instance_id: Optional[Union[int, str, ObjectId]], data: dict):
         raise NotImplementedError
 
     @abstractmethod
-    async def list(self, **parameters) -> List[MODEL]:
+    async def list(self, *args, **kwargs) -> List[dict]:
         raise NotImplementedError
 
     @abstractmethod
-    async def delete(self, instance_id: Optional[Union[int, str]]) -> None:
+    async def delete(self, instance_id: Optional[Union[int, str, ObjectId]]) -> None:
         raise NotImplementedError
 
-    @abstractmethod
-    async def get_or_404(self, value: Optional[Union[int, str]], key: str = 'id'):
-        raise NotImplementedError
+    def get_collection(self):
+        stack = inspect.stack()
+        table_name = stack[2][0].f_locals['self'].__class__.table
+        return self.database[table_name]
